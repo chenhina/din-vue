@@ -77,7 +77,7 @@
             <el-option
               v-for="(item,index) in allServerInfo"
               :key="item.id"
-              :label="item.name || item.ip"
+              :label="item.ip"
               :value="index"
             />
           </el-select>
@@ -158,9 +158,9 @@
   // 要展示的信息，key -> name
   const SERVER_KEY_TO_NAME_MAPPING = {
     ip: "服务器IP",
-    name: "服务器名称",
+    name: "Go版本",
     os: "操作系统",
-    remark: "备注"
+    remark: "goroutine数"
   };
 
   // 更新频率类型映射
@@ -194,7 +194,7 @@
   };
 
   // 服务器信息可修改字段
-  const CHANGEABLE_SERVER_FIELDS = ["name", "remark"];
+  const CHANGEABLE_SERVER_FIELDS = [];
 
   export default {
     name: "Server",
@@ -240,10 +240,11 @@
         // 仪表盘数据
         instrumentBoardData: {},
         // echarts
+        // timeTrick: 5,
         dataTime: [],
         dataMemory: [],
         dataCpu: [],
-
+        flag: true,
       };
     },
     computed: {
@@ -290,7 +291,11 @@
       this.initeCpuCharts();
       this.initMemoryEchart();
     },
+    destroyed() {
+      this.flag = false
+    },
     methods: {
+
       initeCpuCharts() {
         var myChart = echarts.init(document.getElementById('CpuChart'));
         myChart.setOption({
@@ -373,7 +378,6 @@
       initMemoryEchart() {
         // var myChart = echarts.init(document.getElementById('MemoryChart'), 'dark');
         var myChart = echarts.init(document.getElementById('MemoryChart'));
-
         myChart.setOption({
           title: {
             text: '内存使用率'
@@ -422,10 +426,10 @@
             "symbolSize": 5,//折线点的大小，必须加这个，折点上方的数值才会显示
           }]
         });
-
-        setInterval(() => {
-          this.addData(true);
-
+        this.t2 = setInterval(() => {
+          if (this.flag) {
+            this.addData(true);
+          }
           myChart.setOption({
             xAxis: {
               data: this.dataTime
@@ -445,7 +449,7 @@
           this.allServerInfo = response.data;
           if (this.allServerInfo.length > 0) {
             this.currentServer = this.allServerInfo[serverIndex || this.currentServerIndex];
-            this.currentServerName = this.currentServer.name || this.currentServer.ip;
+            this.currentServerName = this.currentServer.ip;
           }
           this.loading.close();
         });
@@ -539,6 +543,7 @@
       // 修改监控状态
       changeMonitorStatus(value) {
         this.isOpeningMonitor = value;
+        this.flag = value
       },
       // 监控周期时间转换
       formatInterval(intervalTime) {

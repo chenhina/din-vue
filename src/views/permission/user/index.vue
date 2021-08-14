@@ -294,7 +294,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.id == undefined" label="用户名称" prop="username">
+            <el-form-item v-if="form.id == undefined" label="用户名" prop="username">
               <el-input v-model="form.username" placeholder="请输入用户名称"/>
             </el-form-item>
           </el-col>
@@ -497,7 +497,7 @@
         // 列信息
         columns: [
           {key: 0, label: `用户编号`, visible: true},
-          {key: 1, label: `用户名称`, visible: true},
+          {key: 1, label: `用户名`, visible: true},
           {key: 2, label: `用户昵称`, visible: true},
           {key: 3, label: `部门`, visible: true},
           {key: 4, label: `关联角色`, visible: true},
